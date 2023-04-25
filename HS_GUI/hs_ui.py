@@ -11,7 +11,7 @@ class ExcelConverter(QWidget):
 
         # GUI 元素初始化
         self.setWindowTitle('Excel 轉換器')  # 設定視窗標題為 "Excel 轉換器"
-        self.setFixedSize(1440, 960)  # 設定視窗大小固定為 1440x960 像素
+        self.setFixedSize(1600, 960)  # 設定視窗大小固定為 1440x960 像素
         screen = QDesktopWidget().availableGeometry()  # 取得可用的螢幕區域
         self.move(screen.width() // 2 - int(self.width() / 2), 30)  # 將視窗移動到螢幕中央偏上方
         self.left_group = QGroupBox('庫存')  # 創建一個名為 "庫存" 的分組框
@@ -34,7 +34,7 @@ class ExcelConverter(QWidget):
         self.update_button = QPushButton('報刀(更新分頁pd_lot_num)')  # 創建
         self.left_total_table = QTableWidget()
         self.ic_names = ["日期", "型號", "系統", "品名", "簡稱", "尺寸", "批號", "批號數量", "保存期限", "出廠日期",
-                         "金額(成本價)", "種類", "醫院", "醫生", "病患", "病歷號", "業務", "器械", "補貨"]
+                         "金額(成本價)", "種類", "部位", "醫院", "醫生", "病患", "病歷號", "業務", "器械", "補貨"]
         self.label_group = QGroupBox('選項')
 
         self.label_layout = QGridLayout()
@@ -47,7 +47,7 @@ class ExcelConverter(QWidget):
                     break
                 label = QLabel(self.ic_names[index])
                 line_edit = QLineEdit()
-                line_edit.setFixedWidth(100)
+                line_edit.setFixedWidth(80)
                 self.label_layout.addWidget(label, i, j*2)
                 self.label_layout.addWidget(line_edit, i, j*2+1)
             else:
@@ -118,6 +118,7 @@ class ExcelConverter(QWidget):
 
     def lot_converter(self, c_df):
         # group 批號數量 by 型號
+        print(c_df['批號數量'])
         c_df['批號數量'] = c_df['批號數量'].astype('int')
         grouped_df = c_df.groupby(['型號', '品名'])['批號數量'].sum().reset_index()
         # 創建新的欄位作為pivot_table的columns
@@ -206,11 +207,34 @@ if __name__ == '__main__':
 
 '''
 4/24 員基 柯博維
-Hook 左18四洞（2208180001）
-3.5CS 14*1(2208290011）
-3.5LS 14*1(2211010005）16*1(2211010006）
-2.7LS 16*3(2208290024）
+Hook 左18四洞(2208180001)
+3.5CS 14*1(2208290011)
+3.5LS 14*1(2211010005)16*1(2211010006)
+2.7LS 16*3(2208290024)
 曹麗滿
 器械：寄庫
 補貨：公司
+'''
+
+'''
+"日期": key in
+"型號": key in / 對應簡稱
+"系統": 下拉式-[一代,萬向,MINI]
+"品名": 對應型號/簡稱
+"簡稱": key in / 對應型號
+"骨釘尺寸": key in
+"批號": key in
+"批號數量": key in
+"有效期限": 對應批號
+"出廠日期": 對應批號
+"金額(成本價)": 對應型號/簡稱
+"種類": 對應型號/簡稱
+"部位": 對應型號/簡稱
+"醫院": key in
+"醫生": 下拉式選單
+"病患": key in
+"病歷號": key in
+"業務" key in
+"器械": key in
+"補貨": key in
 '''
